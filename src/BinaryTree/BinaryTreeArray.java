@@ -259,35 +259,48 @@ public class BinaryTreeArray {
 		return root;
 	}
 	
-	//return the tail of the double-linked chain
-	public static BinaryTreeLinked.Node convertBSTreeToDoubleLinked(BinaryTreeLinked.Node root,BinaryTreeLinked.Node last)
+	/*
+	 * 给定一个数组，判断这个 数组是否是一个二元查找树的后序遍历
+	 * 思路：二元查找树的左子树的值都比根小，右子树的值都比根大。
+	 * 若这个数组是一个二元查找树的后序遍历，则最后一个元素是这个二叉树的根，这个元素之前比这个元素大的元素都是右子树中的节点，剩下是左子树的节点，在剩下的元素中，不能再有比根节点值大的节点。
+	 * 符合条件后，在分别判断左右子树。递归。
+	 */
+	public static boolean isBSTreeByLRD(int[] lrd,int start,int end)
 	{
-		if(root==null)
+		boolean result = true;
+		if(start==end||start>end)
 		{
-			return null;
+			return true;
 		}
 		
-		if(root.getLeft()!=null)
+		int root = lrd[end];
+		int lefttreeend = -1;
+		for(int index=end-1;index>=start;index--)
 		{
-			last = convertBSTreeToDoubleLinked(root.getLeft(),last);
+			if(root>lrd[index])
+			{
+				lefttreeend = index;
+				break;
+			}
+		}
+		if(lefttreeend!=-1)
+		{
+			for(int index=start;index<=lefttreeend;index++)
+			{
+				if(lrd[index]>root)
+				{
+					return false;
+				}
+			}
+			result = isBSTreeByLRD(lrd,start,lefttreeend);
 		}
 		
-		root.setLeft(last);
+		result &=isBSTreeByLRD(lrd,lefttreeend!=-1?lefttreeend+1:start,end-1);
 		
-		if(last!=null)
-		{
-			last.setRight(root);
-		}
-		
-		last = root;
-		if(root.getRight()!=null)
-		{
-			last = convertBSTreeToDoubleLinked(root.getRight(),last);
-		}
-		
-		return last;
+		return result;
 		
 	}
+	
 	
 	public static void main(String[] args) {
 		
@@ -326,19 +339,21 @@ public class BinaryTreeArray {
 		
 		//System.out.println("leaves "+BinaryTreeLinked.getLeaves(root));
 		
-		
+		/*
 		Arrays.sort(preorder);
 		BinaryTreeLinked.Node BSTreeroot = getBSTree(preorder,0,preorder.length-1);
 		BinaryTreeLinked.printBreadthFirst(BSTreeroot);
 		
 		
-		BSTreeroot = convertBSTreeToDoubleLinked(BSTreeroot,null);
+		BSTreeroot = BinaryTreeLinked.convertBSTreeToDoubleLinked(BSTreeroot,null);
 		
 		while(BSTreeroot!=null)
 		{
 			System.out.print(BSTreeroot.getValue()+" ");
 			BSTreeroot = BSTreeroot.getLeft();
 		}
+		
+		*/
 	
 	}
 

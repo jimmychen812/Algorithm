@@ -1,6 +1,7 @@
 package BinaryTree;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -50,6 +51,11 @@ public class BinaryTreeLinked {
 		public boolean isEmptyNode()
 		{
 			return value==-1;
+		}
+		
+		public boolean isLeaf()
+		{
+			return leftchild==null&&rightchild==null;
 		}
 		
 		@Override
@@ -461,6 +467,132 @@ public class BinaryTreeLinked {
 		}
 		
 		
+	}
+	
+	
+	//return the tail of the double-linked chain
+	/*
+	 *思路：每个节点的left为其左子树的先序遍历的最后一个节点last，last的right指向这个节点 
+	 */
+	public static BinaryTreeLinked.Node convertBSTreeToDoubleLinked(BinaryTreeLinked.Node root,BinaryTreeLinked.Node last)
+	{
+		if(root==null)
+		{
+			return null;
+		}
+			
+		if(root.getLeft()!=null)
+		{
+			last = convertBSTreeToDoubleLinked(root.getLeft(),last);
+		}
+			
+		root.setLeft(last);
+			
+		if(last!=null)
+		{
+			last.setRight(root);
+		}
+			
+		last = root;
+		if(root.getRight()!=null)
+		{
+			last = convertBSTreeToDoubleLinked(root.getRight(),last);
+		}
+			
+		return last;
+			
+	}
+	
+	private static void findPath(Node root,LinkedList<Integer> queue,int target,int total)
+	{
+		total += root.getValue();
+		queue.add(root.getValue());
+		if(root.isLeaf())
+		{
+			if(total==target)
+			{
+				Iterator<Integer> iterator = queue.iterator();
+				while(iterator.hasNext())
+				{
+					System.out.print(iterator.next()+" ");
+				}
+			}
+		}
+		else
+		{
+			if(root.getLeft()!=null)
+			{
+				findPath(root.getLeft(),queue,target,total);
+			}
+			
+			if(root.getRight()!=null)
+			{
+				findPath(root.getRight(),queue,target,total);
+			}
+		}
+		
+		total -=root.getValue();
+		queue.removeLast();
+		
+	}
+	public static void printAllRoutesMeetTarget(Node root,int target)
+	{
+		LinkedList<Integer> queue = new LinkedList<Integer>();
+		
+		findPath(root,queue,target,0);
+	}
+	
+	public static boolean hasSubTreeRelationship(Node root1,Node root2)
+	{
+		if(root1==null&&root2!=null
+				||root1!=null&&root2==null)
+		{
+			return false;
+		}
+		if(root1==null&&root2==null)
+		{
+			return true;
+		}
+		return hasSubTreeRelationshipCore(root1,root2);
+	}
+	private static boolean hasSubTreeRelationshipCore(Node root1,Node root2)
+	{
+		boolean result = false;
+		
+		if(root1.getValue()==root2.getValue())
+		{
+			result = hasSubTreeRelationshipCore2(root1,root2);
+		}
+		
+
+		if(!result&&root1.getLeft()!=null)
+		{
+			result = hasSubTreeRelationshipCore(root1.getLeft(),root2);
+		}
+		if(!result&&root1.getRight()!=null)
+		{
+			result = hasSubTreeRelationshipCore(root1.getRight(),root2);
+		}
+		
+		return result;
+	}
+	private static boolean hasSubTreeRelationshipCore2(Node root1,Node root2)
+	{
+		if(root2==null)
+		{
+			return true;
+		}
+		if(root1==null)
+		{
+			return false;
+		}
+		
+		if(root1.getValue()!=root2.getValue())
+		{
+			return false;
+		}
+
+		return hasSubTreeRelationshipCore2(root1.getLeft(),root2.getLeft())&&hasSubTreeRelationshipCore2(root1.getRight(),root2.getRight());
 	}
 	
 	public static void main(String[] args) {
