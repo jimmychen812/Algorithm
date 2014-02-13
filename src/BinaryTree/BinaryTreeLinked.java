@@ -239,14 +239,13 @@ public class BinaryTreeLinked {
 	//深度优先遍历之后根遍历
 	public static void printLRD(Node root)
 	{
-		if(root.leftchild!=null)
+		if(root==null)
 		{
-			printLRD(root.leftchild);
+			return;
 		}
-		if(root.rightchild!=null)
-		{
-			printLRD(root.rightchild);
-		}
+		
+		printLRD(root.leftchild);
+		printLRD(root.rightchild);
 		System.out.print(root.value+" ");
 	}
 	
@@ -433,19 +432,19 @@ public class BinaryTreeLinked {
 		
 		int p1 = (indexNode1-1)/2;
 		int p2 = (indexNode2-1)/2;
-		p1 = p1<0?0:p1;
-		p2 = p2<0?0:p2;
+		//p1 = p1<0?0:p1;
+		//p2 = p2<0?0:p2;
 		while(p1!=p2)
 		{
 			if(p1>p2)
 			{
 				p1 = (p1-1)/2;
-				p1 = p1<0?0:p1;
+				//p1 = p1<0?0:p1;
 			}
 			else
 			{
 				p2 = (p2-1)/2;
-				p2 = p2<0?0:p2;
+				//p2 = p2<0?0:p2;
 			}
 		}
 		
@@ -455,15 +454,54 @@ public class BinaryTreeLinked {
 	}
 	public static void switchChildren(Node root)
 	{
-		if(root!=null)
+		if(root==null)
 		{
-			Node oldleft = root.leftchild;
-			root.leftchild = root.rightchild;
-			root.rightchild = oldleft;
+			return;
+		}
+		if(root.isLeaf())
+		{
+			return;
+		}
+
+		Node oldleft = root.leftchild;
+		root.leftchild = root.rightchild;
+		root.rightchild = oldleft;
+		
+		switchChildren(root.leftchild);
+		switchChildren(root.rightchild);
+	
+	}
+	
+	public static void switchChildrenNonRescursion(Node root)
+	{
+		if(root==null)
+		{
+			return;
+		}
+		if(root.isLeaf())
+		{
+			return;
+		}
+		
+		Stack<Node> stack = new Stack<Node>();
+		stack.add(root);
+		
+		while(!stack.isEmpty())
+		{
+			Node node = stack.pop();
 			
-			switchChildren(root.leftchild);
-			switchChildren(root.rightchild);
+			Node oldleft = node.getLeft();
+			node.setLeft(node.getRight());
+			node.setRight(oldleft);
 			
+			if(node.getLeft()!=null)
+			{
+				stack.add(node.getLeft());
+			}
+			if(node.getRight()!=null)
+			{
+				stack.add(node.getRight());
+			}
 		}
 		
 		
