@@ -1,5 +1,7 @@
 package array;
 
+import org.junit.Test;
+
 public class TestArray {
 	private char[] chars1 = {'H','e','l','l','o',',','w','o','r','l','d','!'};
 	
@@ -57,6 +59,76 @@ public class TestArray {
 		
 		return max;
 	}
+	
+	/*
+	 * 动态规划：
+	 * f(0)=a[0]
+	 * f(i)=max{f(i-1)+a[i],a[i]} i>=1 子序列a(0),a(1),...a(i)的最大值
+	 * maxvalue = max{f(0),f(1),...,f(n)}
+	*/
+	public int getMax2(int[] numbers)
+	{
+		
+		int max = numbers[0];
+		int total = numbers[0];
+
+		for(int index=1;index<numbers.length;index++)
+		{
+			total = total+numbers[index];
+			if(numbers[index]>total)
+			{
+				total = numbers[index];
+
+			}
+			if(total>max)
+			{
+				max = total;
+
+			}
+
+		}
+		
+		System.out.println("max value is "+max);
+
+		return max;
+	}
+	
+	/*
+	 * 
+	 * 求一个数组A{a0,a1,a2,a3...,an-1}(ai >0,0<=i<=n-1)的子序列，要求子序列中每个元素不能相邻，并且使其和最大。
+	 * f(0)=0
+	 * g(0)=a[0]
+	 * f(i)=max{f(i-1),g(i-1)},i>=1 不选择i元素的子序列的和的最大值
+	 * g(i)=f(i-1)+a[i] i>=1 选择i元素的子序列的和的最大值
+	 */
+	public int getMax3(int[] numbers)
+	{
+		//numbers = new int[]{1, -2, 3, 10, -4, 7, 2, -5};
+		
+		int max = numbers[0];
+		int f = 0,g=numbers[0];
+		for(int index=1;index<numbers.length;index++)
+		{
+			int temp = f;
+			f = f>g?f:g;
+			g = temp+numbers[index];
+			
+			int bigger = g;
+			if(f>g)
+			{
+				bigger = f;
+			}
+			if(bigger>max)
+			{
+				max = bigger;
+			}
+			
+		}
+		
+		
+		return max;
+	}
+	
 	
 	/*
 		题目：输入一个已经按升序排序过的数组和一个数字，在数组中查找两个数，使得它们的和正好是输入的那个数字。要求时间复杂度是O(n)。如果有多对数字的和等于输入的数字，输出任意一对即可。
@@ -553,6 +625,23 @@ public class TestArray {
 		{
 			System.out.print(chars[index]+" ");
 		}
+	}
+	
+	//@Test
+	public void test_getMax2()
+	{
+		int[] numbers = {1, -2, 3, 10, -4, 7, 2, -5};
+		//int[] numbers = {-1, -2, -3, -10, -4, -7, -2, -5};
+		getMax2(numbers);
+	}
+	
+	@Test
+	public void test_getMax3()
+	{
+		int[] numbers = {1, -2, 3, 10, -4, 7, 2, -5};
+		int max = getMax3(numbers);
+		
+		System.out.println(max);
 	}
 	
 	public static void main(String[] args) throws Exception
