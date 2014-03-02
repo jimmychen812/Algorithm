@@ -1,5 +1,8 @@
 package linkedlist;
 
+import org.junit.Assert;
+import org.junit.Test;
+
 public class TestLinkedList {
 	
 	private char[] chars = new char[]{'h','e','l','l','o',',','w','o','r','l','d','!'};
@@ -42,65 +45,71 @@ public class TestLinkedList {
 		}
 	}
 	
-	public LinkedItem initLinkedList(char[] chars,LinkedItem root)
+	//return the root of this linked list
+	public LinkedItem initLinkedList(char[] chars)
 	{
-		LinkedItem node = root;
-		int lastIndex = chars.length-1;
-		for(int index=0;index<=lastIndex;index++)
+		if(chars==null||chars.length<0)
 		{
-			node.value = chars[index];
-
-			if(index<lastIndex)
-			{
-				node.next = new LinkedItem();
-				node = node.next;
-			}
-			else
-			{
-				node.next = null;
-			}	
+			return null;
+		}
+		
+		LinkedItem root = new LinkedItem(chars[0]);
+		LinkedItem last = root;
+		
+		
+		int lastIndex = chars.length-1;
+		for(int index=1;index<=lastIndex;index++)
+		{
+			last.next = new LinkedItem(chars[index]);
 			
+			last = last.next;	
 		}
 		
 		return root;
 	}
 	//创建一个有环的单链表
-	public void createLinkedListWithALoop(char[] chars,LinkedItem root)
+	public LinkedItem createLinkedListWithALoop(char[] chars,int loopstart)
 	{
-		initLinkedList(chars,root);
+		LinkedItem root = initLinkedList(chars);
 		
-		int loopstartIndex = 6;
-		LinkedItem loopstartItem = null;
-		LinkedItem lastItem = null;
-		int count = 0;
-		LinkedItem node = root;
-		do
+		if(root!=null)
 		{
-			count++;
-			if(count==loopstartIndex)
+			LinkedItem loopstartItem = null;
+			LinkedItem lastItem = null;
+			int count = 0;
+			LinkedItem node = root;
+			do
 			{
-				loopstartItem = node;
+				count++;
+				if(count==loopstart)
+				{
+					loopstartItem = node;
+				}
+				//This is the last node.
+				if(!node.hasNext())
+				{
+					lastItem = node;
+				}
 				
-			}
-			//This is the last node.
-			if(!node.hasNext())
-			{
-				lastItem = node;
-			}
-			node = node.next;
+				node = node.next;
+				
+			}while(node!=null);
 			
-		}while(node!=null);
+			lastItem.next = loopstartItem;
+		}
 		
-		lastItem.next = loopstartItem;
+		
+		
+		return root;
 	}
 	//创建两个有交点的链表
-	public void createLinkedListsWithCommonNode(char[] chars, LinkedItem root1,char[] chars2,LinkedItem root2)
+	public LinkedItem[] createLinkedListsWithCommonNode(char[] chars,char[] chars2)
 	{
-		initLinkedList(chars,root1);
-		initLinkedList(chars2,root2);
+		LinkedItem root1 = initLinkedList(chars);
+		LinkedItem root2 = initLinkedList(chars2);
 		
 		int index = 0;
-		int commonNodeIndex = 5;
+		int commonNodeIndex = chars.length/2;
 		LinkedItem commonNodeInList1 = null;
 		LinkedItem lastNodeInList2 = null;
 		
@@ -110,6 +119,7 @@ public class TestLinkedList {
 			if(index==commonNodeIndex)
 			{
 				commonNodeInList1 = temp;
+				break;
 			}
 			index++;
 			temp = temp.next;
@@ -126,6 +136,8 @@ public class TestLinkedList {
 		
 		
 		lastNodeInList2.next = commonNodeInList1;
+		
+		return new LinkedItem[]{root1,root2};
 	}
 	
 	//给定单链表，检测是否有环。如果有环，则求出进入环的第一个节点。
@@ -163,11 +175,17 @@ public class TestLinkedList {
 		LinkedItem lastNodeInList2 = lastNode(root2);
 		if(lastNodeInList1==lastNodeInList2)
 		{
-			
 			lastNodeInList1.next = root2;
+			
+			return hasLoop(root1);
+			
+		}
+		else
+		{
+			return null;
 		}
 		
-		return hasLoop(root1);
+		
 	}
 	public LinkedItem get(LinkedItem root,int index)
 	{
@@ -240,8 +258,10 @@ public class TestLinkedList {
 		{
 			if(node2.next!=null)
 			{
+				LinkedItem old = node2.next;
+				
 				node2.next = node2.next.next;
-				node2.next.next = null;
+				old.next = null;
 				return true;
 			}
 			
@@ -259,7 +279,7 @@ public class TestLinkedList {
 			return false;
 		}
 
-		while(p.hasNext())
+		while(p!=null&&p.hasNext())
 		{
 			p.value = p.next.value;
 			if(p.next.next==null)
@@ -462,20 +482,44 @@ public class TestLinkedList {
 		return count;
 	}
 	
+	//@Test
+	public void test_hasLoop()
+	{
+		//a linkedlist with a loop
+		char[] chars = new char[]{'h','e','l','l','o',',','w','o','r','l','d','!'};
+		LinkedItem root1 = createLinkedListWithALoop(chars,chars.length/2);
+		LinkedItem node1 = hasLoop(root1);
+		Assert.assertTrue(node1!=null);
+		
+		System.out.println(node1.value);
+		
+		//a linkedlist without a loop
+		LinkedItem root2 = initLinkedList(chars);
+		LinkedItem node2 = hasLoop(root2);
+		Assert.assertTrue(node2==null);
+		System.out.println("without a loop");
+		
+	}
+	
+	@Test
+	public void test_hasCommon()
+	{
+		char[] chars1 = new char[]{'h','e','l','l','o'};
+		char[] chars2 = new char[]{'w','o','r','l','d'};
+		
+		LinkedItem[] roots = createLinkedListsWithCommonNode(chars1,chars2);
+		
+		LinkedItem common = hasCommon(roots[0],roots[1]);
+		Assert.assertTrue(common!=null);
+		
+		System.out.println("common node "+common.value);
+		
+	}
+	
 	
 	public static void main(String[] args)
 	{
-		TestLinkedList test = new TestLinkedList();
 		
-		LinkedItem root = new LinkedItem();
-		test.initLinkedList(test.chars5,root);
-		//test.print(test.revert(root));
-		test.print(test.revert2(root));
-		
-		
-		LinkedItem root2 = new LinkedItem();
-		test.initLinkedList(test.chars,root2);
-		test.printRevert(root2);
 		
 	}
 }

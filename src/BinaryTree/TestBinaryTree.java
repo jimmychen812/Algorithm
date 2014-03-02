@@ -1,6 +1,7 @@
 package BinaryTree;
 
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.TreeSet;
 
 import org.junit.Test;
@@ -122,7 +123,7 @@ public class TestBinaryTree {
 		
 	
 	}
-	@Test
+	//@Test
 	public void test_getNearestCommonFather()
 	{
 		int[] preorder = {11, 8, 3, 1, 4, 9, 17, 13, 12, 14, 19};
@@ -135,4 +136,46 @@ public class TestBinaryTree {
 		
 		System.out.println("NearestCommonFather is "+BinaryTreeLinked.getNearestCommonFather(root, node1, node2));
 	}
+	
+	//@Test
+	public void test_getLastCommonParentFromBSTree()
+	{
+		//create a BS Tree
+		int[] numbers={1,2,3,4,5,6,7,8,9,10};
+		BinaryTreeLinked.Node root = BinaryTreeArray.getBSTree(numbers,0,numbers.length-1);
+		
+		BinaryTreeLinked.printBreadthFirst(root);
+		
+		BinaryTreeLinked.Node result = BinaryTreeLinked.getLastCommonParentFromBSTree(root,new BinaryTreeLinked.Node(2),new BinaryTreeLinked.Node(7));
+		
+		System.out.println("\nlast common parent is "+result.value);
+		
+	}
+	
+	@Test
+	public void test_getPathToRoot()
+	{
+		int[] preorder = {11, 8, 3, 1, 4, 9, 17, 13, 12, 14, 19};
+		int[] inorder = {1, 3, 4, 8, 9, 11, 12, 13, 14, 17, 19};
+		
+		BinaryTreeLinked.Node root = BinaryTreeArray.getBinaryTreeFromPreOrderAndInOrder(preorder,0,inorder,0,inorder.length-1);
+		BinaryTreeLinked.printBreadthFirst(root);
+		
+		
+		LinkedList<BinaryTreeLinked.Node> path = new LinkedList<BinaryTreeLinked.Node>();
+		BinaryTreeLinked.getPathToRoot(root, new BinaryTreeLinked.Node(12), path);
+		
+		
+		Iterator<BinaryTreeLinked.Node> iterator = path.iterator();
+		while(iterator.hasNext())
+		{
+			System.out.print(iterator.next().value+" ");
+		}
+		
+		
+		
+	}
+	
+	
+	
 }

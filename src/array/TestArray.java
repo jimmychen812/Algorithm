@@ -7,7 +7,7 @@ public class TestArray {
 	
 	/*
 
-		题目：输入一个整形数组，数组里有正数也有负数。数组中连续的一个或多个整数组成一个子数组，每个子数组都有一个和。求所有子数组的和的最大值。要求时间复杂度为O(n)。
+		题目：输入一个整型数组，数组里有正数也有负数。数组中连续的一个或多个整数组成一个子数组，每个子数组都有一个和。求所有子数组的和的最大值。要求时间复杂度为O(n)。
 		例如输入的数组为1, -2, 3, 10, -4, 7, 2, -5，和最大的子数组为3, 10, -4, 7, 2，因此输出为该子数组的和18。
 	
 	*/
@@ -95,7 +95,7 @@ public class TestArray {
 	
 	/*
 	 * 
-	 * 求一个数组A{a0,a1,a2,a3...,an-1}(ai >0,0<=i<=n-1)的子序列，要求子序列中每个元素不能相邻，并且使其和最大。
+	 * 求一个数组A{a0,a1,a2,a3...,an-1}(ai>0,0<=i<=n-1)的子序列，要求子序列中每个元素不能相邻，并且使其和最大。
 	 * f(0)=0
 	 * g(0)=a[0]
 	 * f(i)=max{f(i-1),g(i-1)},i>=1 不选择i元素的子序列的和的最大值
@@ -129,6 +129,63 @@ public class TestArray {
 		return max;
 	}
 	
+	public int binarySearch(int[] numbers, int key)
+	{
+		
+		//return binarySearch(numbers,0,numbers.length-1,key);
+		return binarySearch2(numbers,0,numbers.length-1,key);
+	}
+	//Recursion
+	private int binarySearch(int[] numbers,int start,int end,int key)
+	{
+		int mid = (end+start)>>>1;
+		
+		if(numbers[mid]==key)
+		{
+			return mid;
+		}
+		
+		int result = -1;
+		
+		if(mid!=start)
+		{
+			result = binarySearch(numbers,start,mid-1,key);
+		}
+		
+		if(result==-1 && mid!=end)
+		{
+			result = binarySearch(numbers,mid+1,end,key);
+		}
+		
+		return result;
+
+	}
+	
+	private int binarySearch2(int[] numbers,int start,int end,int key)
+	{
+		
+		while(start<=end)
+		{
+			int mid = (start+end)>>>1;
+			int midValue = numbers[mid];
+			
+			if(midValue<key)
+			{
+				start = mid+1;
+			}
+			else if(midValue>key)
+			{
+				end = mid-1;
+			}
+			else
+			{
+				return mid;
+			}
+			
+			
+		}
+		return -(start+1);
+	}
 	
 	/*
 		题目：输入一个已经按升序排序过的数组和一个数字，在数组中查找两个数，使得它们的和正好是输入的那个数字。要求时间复杂度是O(n)。如果有多对数字的和等于输入的数字，输出任意一对即可。
@@ -225,19 +282,75 @@ public class TestArray {
 		位运算面试题：一个整型数组里除了两个数字之外，其他的数字都出现了两次。请写程序找出这两个只出现一次的数字。要求时间复杂度是O(n)，空间复杂度是O(1)。
 	 
 	 */
-	public int findSingle()
+	public int findSingle(int[] numbers)
 	{
-		int[] numbers = {1,3,3,4,4,5,5};
+		//int[] numbers = {1,3,3,4,4,5,5};
 		int result = 0;
 		
 		for(int index=0;index<numbers.length;index++)
 		{
-			result ^= numbers[index]++;
+			result ^= numbers[index];
 			
 		}
 		
 		return result;
 		
+	}
+	
+	public int[] findTwoSingles(int[] numbers)
+	{
+		int[] result = new int[2];
+		int total = 0;
+		
+		for(int index=0;index<numbers.length;index++)
+		{
+			total ^= numbers[index];
+			
+		}
+		
+		int test = 1;
+		int offset = 0;
+		while(offset<32)
+		{
+			if( (test<<offset&total)!=0 )
+			{
+				if( ((~(test<<offset))&total)==0 )
+				{
+					
+				}
+				else
+				{
+					break;
+				}
+			}
+			else
+			{
+				offset++;
+			}
+		}
+		if(offset==32)
+		{
+			return null;
+		}
+		int value = test<<offset;
+		
+		for(int index=0;index<numbers.length;index++)
+		{
+			if( (numbers[index]&value)==0 )
+			{
+				result[0]^=numbers[index];
+			}
+			else
+			{
+				result[1]^=numbers[index];
+			}
+			
+
+		}
+		
+		
+		
+		return result;
 	}
 	/*
 		
@@ -300,7 +413,8 @@ public class TestArray {
 	
 	/*
 		
-		题目：把一个数组最开始的若干个元素搬到数组的末尾，我们称之为数组的旋转。输入一个排好序的数组的一个旋转，输出旋转数组的最小元素。例如数组{3, 4, 5, 1, 2}为{1, 2, 3, 4, 5}的一个旋转，该数组的最小值为1。
+		题目：把一个数组最开始的若干个元素搬到数组的末尾，我们称之为数组的旋转。输入一个排好序的数组的一个旋转，输出旋转数组的最小元素。
+		例如数组{3, 4, 5, 1, 2}为{1, 2, 3, 4, 5}的一个旋转，该数组的最小值为1。
 	
 	*/
 	public int getMinFromRotatedArray()
@@ -627,6 +741,27 @@ public class TestArray {
 		}
 	}
 	
+	public int calculator(String str)
+	{
+		int total = 0;
+		for(int index=str.length()-1;index>=0;index--)
+		{
+			int number1=0;
+			int number2=0;
+			int offset = 0;
+			
+			char c = str.charAt(index);
+			if(c>='0'&&c<='9')
+			{
+				
+			}
+			
+			
+		}
+		
+		return total;
+	}
+	
 	//@Test
 	public void test_getMax2()
 	{
@@ -635,13 +770,33 @@ public class TestArray {
 		getMax2(numbers);
 	}
 	
-	@Test
+	//@Test
 	public void test_getMax3()
 	{
 		int[] numbers = {1, -2, 3, 10, -4, 7, 2, -5};
 		int max = getMax3(numbers);
 		
 		System.out.println(max);
+	}
+	
+	@Test
+	public void test_binarySearch()
+	{
+		int[] numbers = {1,2,3,4,5,6,7,8,9,10};
+		
+		int result = binarySearch(numbers,11);
+		
+		System.out.println(result);
+	}
+	
+	//@Test
+	public void test_findTwoSingles()
+	{
+		int[] numbers = {1,3,3,4,4,5,10,5};
+		
+		int[] result = findTwoSingles(numbers);
+		
+		System.out.println(result[0]+" "+result[1]);
 	}
 	
 	public static void main(String[] args) throws Exception
@@ -659,10 +814,6 @@ public class TestArray {
 			System.out.println("Can't find a result");
 		}
 		
-		JudgeEven judge = new JudgeEven();
-		ta.arrangeByOddAndEven(judge);
-		
-		System.out.println("Single is "+ta.findSingle());
 		
 		System.out.println("Is straight "+ta.isStraight());
 		

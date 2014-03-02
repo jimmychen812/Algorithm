@@ -153,6 +153,7 @@ public class BinaryTreeLinked {
 			
 		}
 		
+		System.out.println();
 		return maxwidth;
 		
 	}
@@ -336,6 +337,36 @@ public class BinaryTreeLinked {
 		}
 	}
 	
+	public static boolean getPathToRoot(Node root,Node node,LinkedList<Node> path)
+	{
+		path.push(root);
+		
+		
+		if(root.value==node.value)
+		{
+			return true;
+		}
+		
+		boolean found = false;
+		if(root.getLeft()!=null)
+		{
+			found = getPathToRoot(root.getLeft(),node,path);
+		}
+		
+		if(!found&&root.getRight()!=null)
+		{
+			found = getPathToRoot(root.getRight(),node,path);
+		}
+	
+		if(!found)
+		{
+			path.pop();
+		}
+
+		
+		return found;
+	}
+	
 	public int FindKthMax(Node root,int k)
 	{
 		
@@ -451,6 +482,58 @@ public class BinaryTreeLinked {
 		
 		
 		return nodes[p1].value;
+	}
+	
+	public static Node getLastCommonParentFromBSTree(Node root,Node node1,Node node2)
+	{
+		if(root==null||node1==null||node2==null)
+		{
+			return null;
+		}
+		
+		if(root.value>node1.value&&root.value>node2.value)
+		{
+			if(root.getLeft()!=null)
+			{
+				if(root.getLeft().value==node1.value||root.getRight().value==node2.value)
+				{
+					return root;
+				}
+				
+				
+				return getLastCommonParentFromBSTree(root.getLeft(),node1,node2);
+			}
+			else
+			{
+				System.err.println("This is not a BS tree");
+				
+				return null;
+			}
+		}
+		
+		if(root.value<node1.value&&root.value<node2.value)
+		{
+			if(root.getRight()!=null)
+			{
+				if(root.getRight().value==node1.value||root.getRight().value==node2.value)
+				{
+					return root;
+				}
+				
+				return getLastCommonParentFromBSTree(root.getRight(),node1,node2);
+			}
+			else
+			{
+				System.err.println("This is not a BS tree");
+				
+				return null;
+			}
+		}
+		
+		
+		
+		return root;
+		
 	}
 	public static void switchChildren(Node root)
 	{
