@@ -6,7 +6,6 @@ public class SortTest {
 
 	public void heapSort(int[] numbers)
 	{
-		
 		//build heap
 		for(int index=numbers.length/2-1;index>=0;index--)
 		{
@@ -25,41 +24,31 @@ public class SortTest {
 		//adjust non-leaf node only
 		if(index<size/2)
 		{
-			boolean hasLeft = (2*index+1)<size;
-			boolean hasRight = (2*index+2)<size;
-			int lastIndex = -1;
-			int biggerChild = index;
-			
-			if(!hasLeft&&!hasRight)
+			int max = numbers[index];
+			int changed = index;
+			int leftChildIndex = index*2+1;
+			int rightChildIndex = index*2+2;
+			if(leftChildIndex<size&&max<numbers[leftChildIndex])
 			{
-				//impossible to be here.
-				return;
+				max = numbers[leftChildIndex];
+				changed = leftChildIndex;
+			}
+			if(rightChildIndex<size&&max<numbers[rightChildIndex])
+			{
+				max = numbers[rightChildIndex];
+				changed = rightChildIndex;
 			}
 			
-			if(hasLeft&&numbers[2*index+1]>numbers[biggerChild])
+			if(changed!=index)
 			{
-				biggerChild = 2*index+1;
-			}
-			if(hasRight&&numbers[2*index+2]>numbers[biggerChild])
-			{
-				biggerChild = 2*index+2;
-			}
-			
-			if(biggerChild!=index)
-			{
-				heapSwap(numbers,biggerChild,index);
+				int temp = numbers[index];
+				numbers[index] = numbers[changed];
+				numbers[changed] = temp;
 				
-				lastIndex = biggerChild;
-			}
-			
-			
-			if(lastIndex!=-1)
-			{
-				heapAdjust(numbers,lastIndex,size);
-			}
-		}
-		
-		
+				
+				heapAdjust(numbers,changed,size);
+			}	
+		}	
 	}
 	private void heapSwap(int[] numbers, int from, int to)
 	{
@@ -166,7 +155,24 @@ public class SortTest {
 		
 	}
 	
-	//@Test
+	public static void bubbleSort(int[] numbers)
+	{
+		int start=0,end=numbers.length-1;
+		for(int i=end;i>start;i--)
+		{
+			for(int j=start;j<i;j++)
+			{
+				if(numbers[j]>numbers[j+1])
+				{
+					int temp = numbers[j];
+					numbers[j] = numbers[j+1];
+					numbers[j+1] = temp;
+				}
+			}
+		}
+	}
+	
+	@Test
 	public void test_heapSort()
 	{
 		int[] numbers={16,7,3,20,17,8};
@@ -176,7 +182,7 @@ public class SortTest {
 		print(numbers);
 	}
 	
-	@Test
+	//@Test
 	public void test_quickSort()
 	{
 		//int[] numbers={16,7,3,20,17,8};
@@ -188,7 +194,7 @@ public class SortTest {
 		print(numbers);
 	}
 	
-	@Test
+	//@Test
 	public void test_mergeSort()
 	{
 		int[] numbers={48,6,57,88,60,42,83,73,88,85};
@@ -199,6 +205,15 @@ public class SortTest {
 		
 		//print
 		print(result);
+	}
+	
+	//@Test
+	public void test_bubbleSort()
+	{
+		int[] numbers={48,6,57,88,60,42,83,73,88,85};
+		bubbleSort(numbers);
+		
+		print(numbers);
 	}
 	
 	private void print(int[] numbers)
